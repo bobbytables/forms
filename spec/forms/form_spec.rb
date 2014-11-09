@@ -132,11 +132,11 @@ RSpec.describe Forms::Form do
 
   describe 'Attributes' do
     it 'defines an accessor to the attributes passed in' do
-      class DummyForm < Forms::Form
+      klass = Class.new Forms::Form do
         attribute :bunk
       end
 
-      instance = DummyForm.new(attributes: { bunk: 'bed' })
+      instance = klass.new(attributes: { bunk: 'bed' })
       expect(instance.bunk).to eq('bed')
     end
 
