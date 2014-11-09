@@ -30,6 +30,12 @@ RSpec.describe Forms::Form do
       instance = Forms::Form.new(current_user: user)
       expect(instance.options[:current_user]).to be(user)
     end
+
+    it 'assigns the first non-option as the object' do
+      user = double
+      instance = Forms::Form.new(user)
+      expect(instance.object).to be(user)
+    end
   end
 
   describe '.middleware' do
@@ -96,6 +102,19 @@ RSpec.describe Forms::Form do
 
       form.persist
     end
+
+    it 'updates the attributes on the object' do
+      class User
+        attr_accessor :email
+        def save; true end
+      end
+
+      user = User.new
+      form = Forms::Form.new(user, attributes: { email: 'bunk@bed.com' })
+      form.persist
+
+      expect(user.email).to eq('bunk@bed.com')
+    end
   end
 
   describe '#context' do
@@ -104,6 +123,17 @@ RSpec.describe Forms::Form do
       form = Forms::Form.new(object: object, attributes: { hello: 'world' })
 
       expect(form.context).to be_kind_of(Forms::FormContext)
+    end
+  end
+
+  describe 'Attributes' do
+    it 'defines an accessor to the attributes passed in' do
+      class DummyForm < Forms::Form
+        attribute :bunk
+      end
+
+      instance = DummyForm.new(attributes: { bunk: 'bed' })
+      expect(instance.bunk).to eq('bed')
     end
   end
 end

@@ -15,41 +15,51 @@ Lets say we want to set attributes on the object being set, or even stop the cal
 
 ```ruby
 class PromoPolicy
-  def initialize(user)
-    @user = user
+  def initialize(app)
+    @app = app
   end
 
   # Validate this user has not used this promo and the code is valid
-  def can_apply_code?(code)
+  def can_apply_code?(user, code)
     !user.applied_promos.include?(code) and Promo.valid_code?(code)
   end
 
-  def self.call(context)
-    unless new(context.user).can_apply_code?(context.params[:code])
-      context.continue = false
+  def call(context)
+    can_apply = can_apply_code?(context.current_user, context.attributes[:code])
+
+    if can_apply
+      @app.call(context)
+    else
+      context.valid = false
+      context.errors << "Cannot apply promo code"
     end
   end
 end
 
 class PromoAuditOperation
-  def self.call(context)
+  def initialize(app)
+    @app = app
+  end
+
+  def call(context)
     Audit.create(auditable: context.model, actor: context.user, comment: "Applied promo code: #{context.params[:code]}")
   end
 end
 
 class PromoForm < Forms::Form
   middleware.use PromoPolicy
-  middleware.persist
+  middleware.use Forms::Middleware::Persistence
   middleware.use AuditOperation
 
-  context :user
+  context :current_user
 
   attribute :code
 
   validates :code, presence: true
 end
 
-form = PromoForm.new(params[:promo], user: current_user)
+
+form = PromoForm.new(Promo.new, attributes: params[:promo], user: current_user)
 form.save
 ```
 

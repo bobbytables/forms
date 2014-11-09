@@ -20,7 +20,6 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'middleware',  '~> 0.1.0'
   spec.add_dependency 'uber',        '~> 0.0.10'
-  spec.add_dependency 'virtus',      '~> 1.0.3'
   spec.add_dependency 'activemodel', '>= 4.0.0'
 
   spec.add_development_dependency "bundler", "~> 1.6"
