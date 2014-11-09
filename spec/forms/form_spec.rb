@@ -109,8 +109,12 @@ RSpec.describe Forms::Form do
         def save; true end
       end
 
+      form_klass = Class.new(Forms::Form) do
+        attribute :email
+      end
+
       user = User.new
-      form = Forms::Form.new(user, attributes: { email: 'bunk@bed.com' })
+      form = form_klass.new(user, attributes: { email: 'bunk@bed.com' })
       form.persist
 
       expect(user.email).to eq('bunk@bed.com')
@@ -134,6 +138,14 @@ RSpec.describe Forms::Form do
 
       instance = DummyForm.new(attributes: { bunk: 'bed' })
       expect(instance.bunk).to eq('bed')
+    end
+
+    it 'adds the attribute name to a list of attributes' do
+      klass = Class.new Forms::Form do
+        attribute :bunk
+      end
+
+      expect(klass.attributes).to eq([ :bunk ])
     end
   end
 end

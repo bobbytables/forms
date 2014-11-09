@@ -3,9 +3,9 @@ require 'active_model'
 
 module Forms
   class Form
+    extend Uber::InheritableAttribute
     include ActiveModel::Validations
     include Attributes
-    extend Uber::InheritableAttribute
 
     attr_reader :attributes
     attr_reader :object
@@ -44,8 +44,8 @@ module Forms
     end
 
     def persist
-      self.attributes.each do |key, value|
-        object.send("#{key}=", value)
+      self.class.attributes.each do |key|
+        object.send("#{key}=", send(key))
       end
 
       middleware = self.class.middleware
