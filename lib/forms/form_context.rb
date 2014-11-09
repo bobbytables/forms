@@ -1,10 +1,16 @@
+require 'uber/delegates'
+
 module Forms
   class FormContext
+    extend Uber::Delegates
+
     attr_accessor :attributes
     attr_accessor :valid
     attr_accessor :object
     attr_accessor :form_class
     attr_accessor :form
+
+    delegates :form, :errors
 
     def self.build_from(form)
       context = new
