@@ -11,6 +11,18 @@ RSpec.describe Forms::Form do
       instance = Forms::Form.new
       expect(instance.attributes).to be_a(Hash).and eq({})
     end
+
+    it 'accepts an object to later on persist' do
+      object = double
+      instance = Forms::Form.new(object: object)
+
+      expect(instance.object).to be(object)
+    end
+
+    it 'returns a default object' do
+      instance = Forms::Form.new
+      expect(instance.object).to be_a(Forms::DefaultObject)
+    end
   end
 
   describe '.middleware' do
@@ -33,6 +45,12 @@ RSpec.describe Forms::Form do
         expect(klass.middleware.stack.size).to be(1)
         expect(inherited.middleware.stack.size).to be(2)
       end
+    end
+  end
+
+  describe '.persist_method' do
+    it 'is defaulted to #save' do
+      expect(Forms::Form.persist_method).to be(:save)
     end
   end
 end
