@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'ostruct'
 
 RSpec.describe Forms::Form do
   describe '#initialize' do
@@ -50,7 +51,7 @@ RSpec.describe Forms::Form do
 
   describe '.persist_method' do
     it 'is defaulted to #save' do
-      expect(Forms::Form.persist_method).to be(:save)
+      expect(Forms::Form.persist_method).to eq('save')
     end
   end
 
@@ -60,6 +61,43 @@ RSpec.describe Forms::Form do
     it 'adds a method to list of contexts' do
       form.context :current_user
       expect(form.context_options).to include(:current_user)
+    end
+  end
+
+  describe '#persist' do
+    let(:form_class) do
+      Class.new(Forms::Form) do
+        middleware.use Forms::Middleware::Persistence
+      end
+    end
+
+    it 'persists the object from the form' do
+      object = double.as_null_object
+      form = form_class.new(object: object, attributes: { hello: 'world' })
+
+      expect(object).to receive(:save).once
+
+      form.persist
+    end
+
+    it 'uses the method defined on the form object to perist' do
+      form_class.persist_method = 'bunk'
+
+      object = double.as_null_object
+      form = form_class.new(object: object, attributes: { hello: 'world' })
+
+      expect(object).to receive(:bunk).once
+
+      form.persist
+    end
+  end
+
+  describe '#context' do
+    it 'returns a context object for the current state' do
+      object = double
+      form = Forms::Form.new(object: object, attributes: { hello: 'world' })
+
+      expect(form.context).to be_kind_of(Forms::FormContext)
     end
   end
 end
