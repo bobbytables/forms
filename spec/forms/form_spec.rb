@@ -24,6 +24,12 @@ RSpec.describe Forms::Form do
       instance = Forms::Form.new
       expect(instance.object).to be_a(Forms::DefaultObject)
     end
+
+    it 'assigns options for anything else passed in' do
+      user = double
+      instance = Forms::Form.new(current_user: user)
+      expect(instance.options[:current_user]).to be(user)
+    end
   end
 
   describe '.middleware' do

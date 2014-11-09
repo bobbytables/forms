@@ -41,4 +41,19 @@ RSpec.describe Forms::FormContext do
       expect(form_context.valid?).to be_falsey
     end
   end
+
+  describe 'Form Object context methods' do
+    let(:form_class) { Class.new(Forms::Form) }
+
+    before { form_class.context :current_user }
+
+    it 'defines context methods for the form object' do
+      user = double
+      form = form_class.new(current_user: user)
+
+      form_context = Forms::FormContext.build_from(form)
+
+      expect(form_context.current_user).to eq(user)
+    end
+  end
 end

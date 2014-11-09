@@ -1,14 +1,16 @@
 require 'uber/inheritable_attr'
 require 'virtus'
+require 'active_model'
 
 module Forms
   class Form
     include Virtus.model
-
+    include ActiveModel::Validations
     extend Uber::InheritableAttribute
 
     attr_reader :attributes
     attr_reader :object
+    attr_reader :options
 
     # The internal middleware stack for this form object
     inheritable_attr :middleware
@@ -23,8 +25,9 @@ module Forms
     self.context_options = []
 
     def initialize(options = {})
-      @attributes = options.fetch(:attributes, {})
-      @object     = options.fetch(:object, DefaultObject.new)
+      @attributes = options.delete(:attributes) || {}
+      @object     = options.delete(:object) || DefaultObject.new
+      @options    = options
     end
 
     def self.context(*contexts)
