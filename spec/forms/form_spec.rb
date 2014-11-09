@@ -53,4 +53,13 @@ RSpec.describe Forms::Form do
       expect(Forms::Form.persist_method).to be(:save)
     end
   end
+
+  describe '.context' do
+    subject(:form) { Class.new(Forms::Form) }
+
+    it 'adds a method to list of contexts' do
+      form.context :current_user
+      expect(form.context_options).to include(:current_user)
+    end
+  end
 end
