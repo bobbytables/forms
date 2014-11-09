@@ -15,30 +15,30 @@ RSpec.describe Forms::FormContext do
 
       form_object = Forms::Form.new(attributes: attributes, object: object)
 
-      context = Forms::FormContext.build_from(form_object)
+      form_context = Forms::FormContext.build_from(form_object)
 
-      expect(context.attributes).to eq(attributes)
-      expect(context.attributes).to_not be(attributes)
+      expect(form_context.attributes).to eq(attributes)
+      expect(form_context.attributes).to_not be(attributes)
 
-      expect(context.valid).to eq(form_object.valid?)
+      expect(form_context.valid).to eq(form_object.valid?)
 
-      expect(context.object).to_not be(object)
+      expect(form_context.object).to_not be(object)
 
-      expect(context.form_class).to be(Forms::Form)
+      expect(form_context.form_class).to be(Forms::Form)
     end
   end
 
   describe '#valid' do
-    subject(:context) { Forms::FormContext.new }
+    subject(:form_context) { Forms::FormContext.new }
 
     it 'returns true when the context is true' do
-      context.valid = true
-      expect(context.valid?).to be_truthy
+      form_context.valid = true
+      expect(form_context.valid?).to be_truthy
     end
 
     it 'returns false when the context is false' do
-      context.valid = false
-      expect(context.valid?).to be_falsey
+      form_context.valid = false
+      expect(form_context.valid?).to be_falsey
     end
   end
 end
