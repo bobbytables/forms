@@ -27,7 +27,7 @@ module Forms
       options = args.extract_options!
 
       @attributes = options.delete(:attributes) || {}
-      @object     = options.delete(:object) || args[0] || DefaultObject.new
+      @object     = args[0] || DefaultObject.new
       @options    = options
     end
 
@@ -37,10 +37,6 @@ module Forms
 
     def context
       FormContext.build_from(self)
-    end
-
-    def valid?
-      true
     end
 
     def persist

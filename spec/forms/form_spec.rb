@@ -13,13 +13,6 @@ RSpec.describe Forms::Form do
       expect(instance.attributes).to be_a(Hash).and eq({})
     end
 
-    it 'accepts an object to later on persist' do
-      object = double
-      instance = Forms::Form.new(object: object)
-
-      expect(instance.object).to be(object)
-    end
-
     it 'returns a default object' do
       instance = Forms::Form.new
       expect(instance.object).to be_a(Forms::DefaultObject)
@@ -85,7 +78,7 @@ RSpec.describe Forms::Form do
 
     it 'persists the object from the form' do
       object = double.as_null_object
-      form = form_class.new(object: object, attributes: { hello: 'world' })
+      form = form_class.new(object, attributes: { hello: 'world' })
 
       expect(object).to receive(:save).once
 
@@ -96,7 +89,7 @@ RSpec.describe Forms::Form do
       form_class.persist_method = 'bunk'
 
       object = double.as_null_object
-      form = form_class.new(object: object, attributes: { hello: 'world' })
+      form = form_class.new(object, attributes: { hello: 'world' })
 
       expect(object).to receive(:bunk).once
 
@@ -104,7 +97,7 @@ RSpec.describe Forms::Form do
     end
 
     it 'updates the attributes on the object' do
-      class User
+      object_class = Class.new do
         attr_accessor :email
         def save; true end
       end
@@ -113,7 +106,7 @@ RSpec.describe Forms::Form do
         attribute :email
       end
 
-      user = User.new
+      user = object_class.new
       form = form_klass.new(user, attributes: { email: 'bunk@bed.com' })
       form.persist
 

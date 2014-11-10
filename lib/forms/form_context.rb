@@ -5,7 +5,6 @@ module Forms
     extend Uber::Delegates
 
     attr_accessor :attributes
-    attr_accessor :valid
     attr_accessor :object
     attr_accessor :form_class
     attr_accessor :form
@@ -16,7 +15,6 @@ module Forms
       context = new
       context.attributes = form.attributes.clone
       context.object     = form.object.clone
-      context.valid      = form.valid?
       context.form_class = form.class
       context.form       = form
 
@@ -26,11 +24,13 @@ module Forms
     end
 
     def valid?
-      !!valid
+      form.valid?
     end
 
     def create_context_methods
       form_class.context_options.each do |method_name|
+        next if respond_to?(method_name)
+
         instance_eval <<-CONTEXT_METHOD
           def self.#{method_name}
             form.options[:#{method_name}]
