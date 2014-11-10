@@ -5,7 +5,7 @@ By implementing a middleware type of system, you can avoid `before_save`, and `a
 
 For example, you may want to perform an audit action after a model is saved by creating a `Audit.create(name: 'profile_update', user: current_user)`.
 While this could be in the model, you then have the problem of every time you create an object, this operation will occur.
-This slows down tests, sometimes will make test setup massive, pretty soon you're stubbing `Audtion.create` to be a noop. Bad news.
+This slows down tests, sometimes will make test setup massive, pretty soon you're stubbing `Audit.create` to be a noop. Bad news.
 
 Instead, Forms allows you to just put this into a form object that accepts user data.
 
